@@ -1,10 +1,10 @@
 #include "list.h"
 #include "mem.h"
-
-lc_list* lc_list_create( void (*c_free)(void* usr_data, void* data))
+lc_list* lc_list_create(void* usr_data, void (*c_free)(void* usr_data, void* data))
 {
     lc_list* l = lc_mallocz(sizeof(*l));
     l->c_free = c_free;
+    l->usr_data = usr_data;
     return l;
 }
 
@@ -24,11 +24,6 @@ void lc_list_destroy(lc_list* l)
         e = next;
     }
     lc_lite_free(e);
-}
-
-int lc_list_set_data(lc_list* l, void *usr_data)
-{
-    l->data = usr_data;
 }
 
 int lc_list_add(lc_list* l, void *data)
@@ -55,7 +50,7 @@ int lc_list_remove(lc_list* l, void *data)
 
     lc_list_entry* pre = NULL;
 
-    for(lc_list_entry* e = l->root; e != NULL; e = e->next){
+    lc_list_foreach(l, e){
         if(e->data == data){
             if(pre == NULL){
                 l->root = e->next;
@@ -65,6 +60,7 @@ int lc_list_remove(lc_list* l, void *data)
             if(e == l->tail){
                 l->tail = e->next;
             }
+	    lc_list_entry_destroy(e);
             break;
         }
         pre = e;

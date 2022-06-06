@@ -14,11 +14,9 @@ typedef struct lc_list{
     void* usr_data;
 }lc_list;
 
-lc_list* lc_list_create( void (*c_free)(void* usr_data, void* data));
+lc_list* lc_list_create(void* usr_data, void (*c_free)(void* usr_data, void* data));
 
 void lc_list_destroy(lc_list* l);
-
-int lc_list_set_data(lc_list* l, void *usr_data);
 
 int lc_list_add(lc_list* l, void *data);
 
