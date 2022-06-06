@@ -23,7 +23,7 @@ void lc_list_destroy(lc_list* l)
         lc_list_entry_destroy(e);
         e = next;
     }
-    lc_lite_free(e);
+    lc_free(l);
 }
 
 int lc_list_add(lc_list* l, void *data)
@@ -38,6 +38,8 @@ int lc_list_add(lc_list* l, void *data)
         l->tail->next = e;
         l->tail = e;
     }
+
+    l->count++;
 
     return 0;
 }
@@ -65,10 +67,22 @@ int lc_list_remove(lc_list* l, void *data)
         }
         pre = e;
     }
+
+    l->count--;
+
+    return 0;
 }
 
-lc_list_entry* lc_list_entry_create();
+lc_list_entry* lc_list_entry_create()
+{
+  lc_list_entry* e = lc_mallocz(sizeof(*e));
+  return e;
+}
 
-void lc_list_entry_destroy(lc_list_entry* e);
-
-
+void lc_list_entry_destroy(lc_list_entry* e)
+{
+  if(!e){
+    return;
+  }
+  lc_free(e);
+}
